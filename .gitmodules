@@ -1,0 +1,3 @@
+[submodule "submodules/eshetsrv"]
+	path = submodules/eshetsrv
+	url = https://github.com/tomjnixon/eshetsrv.git

@@ -7,7 +7,7 @@ ESHET Documentation
    :maxdepth: 2
    :caption: Contents:
 
-
+   protocol
 
 Indices and tables
 ==================
