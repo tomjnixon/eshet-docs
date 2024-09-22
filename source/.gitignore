@@ -1,2 +1,4 @@
 __pycache__
 /protocol.rst
+/binary_protocol.rst
+/websocket_protocol.rst
