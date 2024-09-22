@@ -30,6 +30,7 @@ def parse_args():
 
 
 rst_line_re = re.compile("^\s*%%[^%](.*)$")
+skip_block_re = re.compile("^\s*%%% SKIP$")
 type_re = re.compile("^\s*-type\s+([a-z][^(]+)\(\)")
 
 
@@ -40,13 +41,23 @@ def deliterate(in_f, out_f):
     # flush_code_block
     code_block = []
 
+    # skip everything before the first RST line
     seen_rst = False
+
+    # skip the next code block
+    skip = False
 
     def flush_code_block():
         if not code_block:
             return
 
         if not seen_rst:
+            code_block.clear()
+            return
+
+        nonlocal skip
+        if skip:
+            skip = False
             code_block.clear()
             return
 
@@ -75,8 +86,13 @@ def deliterate(in_f, out_f):
         code_block.clear()
 
     for line in in_f:
-        rst_line_match = rst_line_re.match(line)
-        if rst_line_match:
+        if skip_block_re.match(line) is not None:
+            flush_code_block()
+            # ensure that the skip line results in at least one blank line in
+            # the output, so that titles after a skipped code block work
+            out_f.write("\n")
+            skip = True
+        elif (rst_line_match := rst_line_re.match(line)) is not None:
             flush_code_block()
             out_f.write(rst_line_match.group(1))
             out_f.write("\n")
